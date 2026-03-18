@@ -140,22 +140,10 @@ AI：你上次学到了 [X]，今天我们继续 [Y]，我会先问你几个问�
 1. 使用 OpenCode 或 Claude Code 窗口多开，将AGENTS.md复制到目标文件夹下，让Agent只依赖AGENTS和目录资源
 2. 使用非思考模型，可以节约时间
 3. 多窗口多任务并行，利用AI思考的时候进行加速学习，可以同时学习多个学科多个技能
-
-
-## 学习教练的对话模式
-
-### 正常模式（默认）
-- 苏格拉底式提问引导
-- 不直接给答案
-- 检验掌握程度
-- 更新学习状态
-
-### 特权模式（`!` 开头）
-跳过教学约束，用于：
-- 调整 Roadmap 文件
-- 修改 AGENTS.md 规范
-- 编辑知识库内容
-- 调用技能完善资料
+    ```
+    start opencode roadmaps\Go-learning
+    start opencode roadmaps\Python-learning
+    ```
 
 ## 相关项目
 
