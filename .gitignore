@@ -1,0 +1,19 @@
+# === OS ===
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# === Editor / IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === Temporary ===
+*.tmp
+*.bak
+*.log
+
+# === External references ===
+CS-Notes/
