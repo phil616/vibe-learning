@@ -15,5 +15,14 @@ Desktop.ini
 *.bak
 *.log
 
-# === External references ===
+# === material/ — 原始知识库目录 ===
+# 保留目录本身，忽略所有内容（文件和子目录）
+material/*
+!material/.gitkeep
+
+# === workspace/ — 用户学习工作空间 ===
+# 每个学习项目都是独立 Git 仓库，整个目录不纳入版本管理
+workspace/
+
+# === 外部引用 ===
 CS-Notes/

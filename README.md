@@ -18,6 +18,8 @@ Vibe Learning 是一个基于 AI Agent 的学习系统，它不只是给你答�
 
 ## 项目结构
 
+本仓库是**工具本身**，不存储个人学习数据。所有用户数据都在本地，不上传。
+
 ```
 vibe-learning/                          ← 你正在看的仓库（公开工具库）
 ├── .claude/skills/
@@ -28,21 +30,27 @@ vibe-learning/                          ← 你正在看的仓库（公开工具
 │   ├── AGENTS.md                       # 学习教练协议模板
 │   └── .gitignore                      # 学习仓库 gitignore 模板
 ├── examples/                           # 完整示例（计算机网络、Python）
+├── material/                           # 原始知识库投放区（目录跟随仓库，内容本地忽略）
+├── workspace/                          # 学习工作空间（整个目录不纳入版本管理）
+│   ├── go-learning/                    # ← 独立 Git 仓库（学习项目）
+│   │   ├── AGENTS.md                   #   学习教练协议
+│   │   ├── Go语言.rdp.md               #   学习路线图
+│   │   └── Go语言.res/                 #   资源文件（夹）
+│   └── python-learning/                # ← 另一个独立 Git 仓库
+│       ├── AGENTS.md
+│       ├── Python学习.rdp.md
+│       └── Python学习.res.md
 ├── install.sh                          # 全局安装脚本 (Linux/macOS)
 ├── install.ps1                         # 全局安装脚本 (Windows)
 └── README.md
 ```
 
-```
-my-learning/                            ← 你的私有学习仓库（由 workspace-init 创建）
-├── AGENTS.md                           # 学习教练协议
-├── resources/                          # .res.md / .res/ 资源文件
-│   ├── Python学习.res.md
-│   └── 计算机网络.res/
-└── roadmaps/                           # .rdp.md 路线图文件
-    ├── Python学习.rdp.md
-    └── 计算机网络.rdp.md
-```
+### 目录职责说明
+
+| 目录 | 是否纳入版本管理 | 用途 |
+|------|----------------|------|
+| `material/` | 目录保留，**内容忽略** | 投放待处理的原始资料（PDF、网页存档、笔记等） |
+| `workspace/` | **完全忽略** | 每个子文件夹都是独立的私有学习 Git 仓库 |
 
 ## 快速开始
 
@@ -64,20 +72,46 @@ cd vibe-learning
 chmod +x install.sh && ./install.sh
 ```
 
-安装完成后，在任意目录对 AI 说「初始化学习空间」即可创建你的私有学习仓库。
+### 方式二：直接在本仓库使用（推荐新手）
 
-### 方式二：直接在本仓库使用
+克隆后直接在本仓库目录下使用，`material/` 和 `workspace/` 均已配置好忽略规则。
 
-如果不需要分离工具和数据，可以直接在本仓库目录下使用 skills。
-
-### 使用流程
+### 工作流程
 
 ```
-1. 初始化学习空间    → 对 AI 说 "初始化学习空间"（或手动复制 templates/）
-2. 准备学习材料      → 收集你要学习的原始资料
-3. 整理为 res 文件   → 对 AI 说 "帮我整理这份资料"
-4. 生成 rdp 路线图   → 对 AI 说 "帮我生成路线图"
-5. 开始学习          → AI 自动作为学习教练，引导你逐节点学习
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Vibe Learning 工作流                          │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  1. 投放原始资料                                                      │
+│     将 PDF、网页存档、笔记等放入 material/                             │
+│                                                                     │
+│  2. 整理为 res 文件                                                   │
+│     在 vibe-learning 目录启动 AI，说 "帮我整理这份资料"                │
+│     → 生成 workspace/<项目>/<科目>.res.md 或 <科目>.res/              │
+│                                                                     │
+│  3. 生成路线图                                                        │
+│     说 "帮我生成路线图"                                               │
+│     → 生成 workspace/<项目>/<科目>.rdp.md                            │
+│                                                                     │
+│  4. 进入学习空间开始学习                                               │
+│     cd workspace/<项目>                                              │
+│     启动 ClaudeCode 或 OpenCode                                      │
+│     → AI 读取 AGENTS.md 协议，作为学习教练引导你逐节点学习             │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### 初始化新学习项目
+
+在 `workspace/` 下创建项目目录并初始化为 Git 仓库：
+
+```bash
+# 进入 workspace 创建学习项目
+cd workspace
+mkdir go-learning && cd go-learning
+git init
+# 然后在此目录对 AI 说 "初始化学习空间"，自动生成 AGENTS.md
 ```
 
 ## 文件格式规范
@@ -179,12 +213,13 @@ AI：你上次学到了 [X]，今天我们继续 [Y]，我会先问你几个问�
 
 ## 最佳实践
 
-1. **工具与数据分离**：用本仓库管理 skills（公开），用独立仓库管理学习资料和进度（私有）
-2. **全局安装 skills**：运行 install 脚本后，skills 在任何仓库都可用
+1. **原始资料统一投放**：所有待处理材料放入 `material/`，处理完可直接删除，不影响版本库
+2. **workspace 每个项目独立建仓**：`workspace/go-learning/` 是独立 Git 仓库，可单独推送到私有 GitHub/Gitee
 3. **多窗口并行学习**：利用 AI 思考间隙切换科目，加速学习
-    ```
-    start opencode my-learning\roadmaps\Go-learning
-    start opencode my-learning\roadmaps\Python-learning
+    ```powershell
+    # Windows - 并行打开多个学习项目
+    start opencode workspace\go-learning
+    start opencode workspace\python-learning
     ```
 4. **使用非思考模型**：学习对话可用更快的模型，节省等待时间
 5. **定期复习**：利用 COVERAGE 和 LOGS 进行间隔复习
