@@ -17,15 +17,31 @@ description: |
 知识本身住在 res，rdp 只存放节点结构、引用链接、掌握检查点和学习状态。
 这样 rdp 文件始终保持轻量，OpenCode 读取时不会因内容过多而浪费 context。
 
+**三层结构关系：**
+
+```
+material/（原始杂乱资料）
+    ↓ res-builder 提炼
+workspace/<项目>/（*.res.md 或 *.res/）（结构化知识库）
+    ↓ rdp-builder 索引
+workspace/<项目>/（*.rdp.md）（学习路线图 + 进度追踪）
+```
+
+rdp-builder 只处理第二层到第三层，不读取 material/。
+
 ---
 
 ## 第零步：确认 res 文件位置
+
+> **注意**：rdp-builder 读取的是 `workspace/<项目>/` 下已整理好的 res 文件，
+> **不读取** `material/` 中的原始资料。若 workspace 下还没有 res 文件，
+> 请先在 vibe-learning 根目录对 AI 说「帮我整理资料」以触发 res-builder。
 
 ### 路径感知规则
 
 **场景 A：在 vibe-learning 仓库根目录下工作（存在 material/ 和 workspace/ 目录）**
 
-列出 workspace/ 下各项目中已有的 res 文件供用户选择：
+列出 `workspace/` 下各项目中已有的 res 文件供用户选择：
 
 ```
 在 workspace/ 下发现以下 res 文件：
