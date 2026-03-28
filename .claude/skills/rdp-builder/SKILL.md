@@ -19,6 +19,34 @@ description: |
 
 ---
 
+## 第零步：确认 res 文件位置
+
+### 路径感知规则
+
+**场景 A：在 vibe-learning 仓库根目录下工作（存在 material/ 和 workspace/ 目录）**
+
+列出 workspace/ 下各项目中已有的 res 文件供用户选择：
+
+```
+在 workspace/ 下发现以下 res 文件：
+  - workspace/go-learning/Go语言.res/
+  - workspace/python-learning/Python学习.res.md
+
+请问要为哪个资源文件生成路线图？
+```
+
+选定后，rdp 文件输出到与 res 文件**同一个项目目录**中。
+
+**场景 B：已在某个学习项目目录内（存在 AGENTS.md 或 *.res.md / *.res/）**
+
+在当前目录查找 res 文件，找到后直接使用，rdp 输出到当前目录。
+
+**场景 C：其他任意目录**
+
+提示用户先确认 res 文件路径，然后在 res 文件所在目录输出 rdp。
+
+---
+
 ## 第一步：读取 res 文件
 
 **判断 res 类型：**
@@ -187,16 +215,19 @@ Markdown 标题自动生成锚点，规则：全部小写、空格变连字符�
 生成文件后，输出摘要：
 
 ```
-已生成：Python学习.rdp.md
+已生成：workspace/<项目名>/Python学习.rdp.md
 共 N 个节点，关联资源文件：Python学习.res.md（或 Python学习.res/）
 文件大小：约 X 行（不含原始知识内容）
 
-目录结构：
-  Python学习.res.md       ← 原始知识内容（约 NNN 行）
-  Python学习.rdp.md       ← 路线图索引（约 NN 行）← 刚生成
+项目目录结构：
+  workspace/<项目名>/
+  ├── AGENTS.md              ← 学习教练协议
+  ├── Python学习.res.md      ← 原始知识内容（约 NNN 行）
+  └── Python学习.rdp.md      ← 路线图索引（约 NN 行）← 刚生成
 
 使用说明：
-- OpenCode 读取 rdp 了解学习进度和节点结构
+- cd workspace/<项目名>，启动 ClaudeCode 或 OpenCode
+- AI 读取 AGENTS.md 后作为学习教练，通过 rdp 文件了解学习进度
 - 需要查看具体知识内容时，跟随 CONTENT 中的链接打开对应 res 文件
 - 学习状态更新写入 rdp 的 STATUS 和 LOGS 字段
 ```
