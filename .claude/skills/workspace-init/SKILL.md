@@ -21,7 +21,7 @@ vibe-learning 仓库是工具（skills + 协议），每个学习空间是独立
 
 ## 执行步骤
 
-### 第一步：确认目标目录
+### 第一步：确认并锁定目标目录
 
 **若在 vibe-learning 根目录下工作（存在 workspace/ 目录）：**
 
@@ -29,7 +29,18 @@ vibe-learning 仓库是工具（skills + 协议），每个学习空间是独立
 你想创建哪个学习项目？请输入项目名称（例如：go-learning、python-learning）：
 ```
 
-目标路径将自动设为 `workspace/<项目名>/`。若目录已存在，提示用户确认是否继续（不会覆盖已有文件）。
+用户输入项目名后，**立即执行以下操作锁定路径：**
+
+1. 创建目录：`workspace/<用户输入的项目名>/`
+2. 用命令回读实际创建的目录名：
+   ```bash
+   ls workspace/          # Linux/macOS
+   dir workspace/         # Windows
+   ```
+3. 从命令输出中找到刚创建的目录，以**文件系统返回的实际名称**为准（防止大小写或编码问题）
+4. 将此名称作为本次操作的锁定路径，后续所有步骤均使用该名称
+
+若目录已存在，提示用户确认是否继续（不会覆盖已有文件），然后同样以 `ls` 结果确认目录名。
 
 **若在其他任意目录下工作：**
 
@@ -41,7 +52,7 @@ vibe-learning 仓库是工具（skills + 协议），每个学习空间是独立
 学习空间会包含 AGENTS.md 教练协议和 .gitignore。
 ```
 
-如果用户指定路径且目录不存在，创建该目录。
+如果用户指定路径且目录不存在，创建该目录后用 `pwd`/`cd` 命令读取绝对路径锁定。
 如果目标目录已包含 AGENTS.md，询问是否覆盖。
 
 ### 第二步：创建目录结构
@@ -105,20 +116,24 @@ git -C <目标路径> rev-parse --is-inside-work-tree
 
 ## 完成后输出
 
+输出时，将所有 `<项目名>` 替换为**第一步 `ls` 命令返回的实际目录名**：
+
 ```
-✅ 学习空间已初始化：workspace/<项目名>/
+✅ 学习空间已初始化：workspace/<实际目录名>/
 
 目录结构：
-  AGENTS.md     ← 学习教练协议（已就绪）
-  .gitignore    ← Git 忽略规则（已就绪）
+  workspace/<实际目录名>/AGENTS.md     ← 学习教练协议（已就绪）
+  workspace/<实际目录名>/.gitignore    ← Git 忽略规则（已就绪）
 
   （res 和 rdp 文件在整理资料时自动生成到此目录）
 
 下一步：
   1. 将原始资料放入 vibe-learning/material/
-  2. 在 vibe-learning 根目录对 AI 说「帮我整理资料」→ res 文件将生成到本项目
-  3. 对 AI 说「帮我生成路线图」→ rdp 文件将生成到本项目
-  4. cd workspace/<项目名>，启动 ClaudeCode 或 OpenCode 开始学习
+  2. 在 vibe-learning 根目录对 AI 说「帮我整理资料」
+     → res 文件将生成到 workspace/<实际目录名>/
+  3. 对 AI 说「帮我生成路线图」
+     → rdp 文件将生成到 workspace/<实际目录名>/
+  4. cd workspace/<实际目录名>，启动 ClaudeCode 或 OpenCode 开始学习
 ```
 
 ---

@@ -221,8 +221,9 @@ AI：你上次学到了 [X]，今天我们继续 [Y]，我会先问你几个问�
     start opencode workspace\go-learning
     start opencode workspace\python-learning
     ```
-4. **使用非思考模型**：学习对话可用更快的模型，节省等待时间
-5. **定期复习**：利用 COVERAGE 和 LOGS 进行间隔复习
+4. **音频通知（推荐）**：AI 回复完成时发出声音提醒，让你在思考间隙无需盯屏。推荐使用 [opencode-notifier](https://github.com/mohak34/opencode-notifier) 项目，支持 OpenCode 会话结束后的音频通知
+5. **使用非思考模型**：学习对话可用更快的模型，节省等待时间
+6. **定期复习**：利用 COVERAGE 和 LOGS 进行间隔复习
 
 ## 完整示例
 
@@ -236,6 +237,7 @@ AI：你上次学到了 [X]，今天我们继续 [Y]，我会先问你几个问�
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — 本项目基于 Claude Code 的技能系统构建
 - [OpenCode](https://github.com/anthropics/opencode) — 开源的 AI 编程助手，同样支持 skills
+- [opencode-notifier](https://github.com/mohak34/opencode-notifier) — OpenCode 会话结束音频通知，多窗口并行学习时无需盯屏等待
 
 ## 许可证
 

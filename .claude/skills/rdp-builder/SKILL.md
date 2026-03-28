@@ -31,35 +31,82 @@ rdp-builder 只处理第二层到第三层，不读取 material/。
 
 ---
 
-## 第零步：确认 res 文件位置
+## 第零步：定位 res 文件并锁定输出路径
 
-> **注意**：rdp-builder 读取的是 `workspace/<项目>/` 下已整理好的 res 文件，
-> **不读取** `material/` 中的原始资料。若 workspace 下还没有 res 文件，
-> 请先在 vibe-learning 根目录对 AI 说「帮我整理资料」以触发 res-builder。
+> ⚠️ **路径锁定规则（最重要）**
+> rdp 文件的输出路径 = res 文件所在的**物理目录**，通过文件系统命令读取，
+> **严禁**从对话历史或上下文记忆中推断路径或项目名。
+> rdp 文件与 res 文件必须在同一目录下——这不是约定，是强制规则。
 
-### 路径感知规则
-
-**场景 A：在 vibe-learning 仓库根目录下工作（存在 material/ 和 workspace/ 目录）**
-
-列出 `workspace/` 下各项目中已有的 res 文件供用户选择：
+### 规则：rdp 输出路径 = res 文件的父目录
 
 ```
-在 workspace/ 下发现以下 res 文件：
-  - workspace/go-learning/Go语言.res/
-  - workspace/python-learning/Python学习.res.md
-
-请问要为哪个资源文件生成路线图？
+res 文件路径：workspace/network-learning/计算机网络.res.md
+                         ↓ 取父目录
+rdp 输出路径：workspace/network-learning/
+                         ↓ 生成文件
+rdp 文件路径：workspace/network-learning/计算机网络.rdp.md
 ```
 
-选定后，rdp 文件输出到与 res 文件**同一个项目目录**中。
+不论通过任何方式找到 res 文件，都按此规则推导输出路径，**不接受任何其他来源的路径信息**。
 
-**场景 B：已在某个学习项目目录内（存在 AGENTS.md 或 *.res.md / *.res/）**
+---
 
-在当前目录查找 res 文件，找到后直接使用，rdp 输出到当前目录。
+### 场景 A：在 vibe-learning 根目录下工作
 
-**场景 C：其他任意目录**
+执行以下命令，从文件系统实际列出所有 res 文件：
 
-提示用户先确认 res 文件路径，然后在 res 文件所在目录输出 rdp。
+```bash
+# Linux/macOS
+find workspace/ -name "*.res.md" -o -name "*.res" -type d
+
+# Windows PowerShell
+Get-ChildItem workspace/ -Recurse | Where-Object { $_.Name -like "*.res.md" -or $_.Name -like "*.res" }
+```
+
+将命令实际返回的路径完整列出，让用户按编号选择：
+
+```
+在 workspace/ 下发现以下 res 文件（从文件系统读取）：
+  [1] workspace/network-learning/计算机网络.res.md
+  [2] workspace/go-learning/Go语言.res/
+
+请选择编号：
+```
+
+选定后，**直接从该条目的路径字符串提取父目录**，作为锁定的输出路径。
+禁止手动输入或根据记忆拼写路径。
+
+### 场景 B：已在某个学习项目目录内
+
+通过命令读取当前目录的绝对路径，并扫描当前目录下的 res 文件：
+
+```bash
+pwd          # Linux/macOS
+cd           # Windows
+```
+
+在当前目录找到 res 文件后，输出路径 = 当前目录（由命令返回，不依赖记忆）。
+
+### 场景 C：其他任意目录
+
+提示用户明确提供 res 文件的完整路径，然后取其父目录作为输出路径。
+不允许靠猜测确定路径。
+
+### 写文件前的强制验证
+
+在生成任何 rdp 文件之前，验证目标目录确实存在：
+
+```bash
+ls <锁定的输出目录>/
+```
+
+- 若目录**存在**，且其中的 res 文件也**确实存在** → 继续
+- 若任一不存在 → **立即停止**，输出错误：
+  ```
+  ❌ 路径验证失败：<具体失败项> 不存在，停止写入。
+  请重新执行第零步确认路径。
+  ```
 
 ---
 
@@ -90,7 +137,13 @@ rdp-builder 只处理第二层到第三层，不读取 material/。
 
 ## 第二步：生成 rdp 文件
 
-文件名：`科目名.rdp.md`（与 res 文件使用相同的科目名前缀）
+**文件名派生规则（严格执行）：**
+```
+res 文件名：计算机网络.res.md   →   rdp 文件名：计算机网络.rdp.md
+res 目录名：计算机网络.res/     →   rdp 文件名：计算机网络.rdp.md
+```
+rdp 文件名 = 去掉 res 文件的 `.res.md` 后缀或 `.res/` 后缀，加上 `.rdp.md`。
+**禁止自行命名 rdp 文件**，文件名必须从 res 文件名机械派生。
 
 ### 文件头格式
 
@@ -228,21 +281,21 @@ Markdown 标题自动生成锚点，规则：全部小写、空格变连字符�
 
 ## 完成后输出
 
-生成文件后，输出摘要：
+生成文件后，输出实际路径摘要（用真实路径替换所有占位符）：
 
 ```
-已生成：workspace/<项目名>/Python学习.rdp.md
-共 N 个节点，关联资源文件：Python学习.res.md（或 Python学习.res/）
+已生成：<res 文件的父目录>/<科目名>.rdp.md
+关联资源文件：<res 文件的完整路径>
 文件大小：约 X 行（不含原始知识内容）
 
-项目目录结构：
-  workspace/<项目名>/
+项目目录结构（当前实际状态）：
+  <res 文件的父目录>/
   ├── AGENTS.md              ← 学习教练协议
-  ├── Python学习.res.md      ← 原始知识内容（约 NNN 行）
-  └── Python学习.rdp.md      ← 路线图索引（约 NN 行）← 刚生成
+  ├── <科目名>.res.md        ← 原始知识内容
+  └── <科目名>.rdp.md        ← 路线图索引 ← 刚生成
 
 使用说明：
-- cd workspace/<项目名>，启动 ClaudeCode 或 OpenCode
+- cd <res 文件的父目录>，启动 ClaudeCode 或 OpenCode
 - AI 读取 AGENTS.md 后作为学习教练，通过 rdp 文件了解学习进度
 - 需要查看具体知识内容时，跟随 CONTENT 中的链接打开对应 res 文件
 - 学习状态更新写入 rdp 的 STATUS 和 LOGS 字段
