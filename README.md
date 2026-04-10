@@ -1,5 +1,5 @@
 # Vibe Learning 氛围学习
-
+# 更加全面的方式：https://github.com/HKUDS/DeepTutor
 > 利用 AI Agent 进行沉浸式技能学习的工具系统，通过智能体的 Agent 循环帮助你真正掌握特定领域的知识。
 
 ## 项目简介
